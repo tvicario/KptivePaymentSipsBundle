@@ -1,3 +1,0 @@
-kptive_payment_sips_reponse:
-    pattern:  /payment/sips/notification
-    defaults: { _controller: KptivePaymentSipsBundle:Sips:response }
