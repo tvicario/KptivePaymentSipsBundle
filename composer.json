@@ -1,11 +1,15 @@
 {
     "name": "kptive/payment-sips-bundle",
     "type": "symfony-bundle",
-    "description": "Payment Bundle to use with the ATOS SIPS solution",
+    "description": "Payment Bundle providing access to the ATOS SIPS solution",
     "keywords": ["payment", "atos", "sips", "mercanet", "cyberplus", "elysnet", "e-transactions", "scellius","sogenactif", "webaffaires", "scelliusnet", "sherlocks"],
     "homepage": "http://github.com/KptiveStudio/KptivePaymentSipsBundle",
     "license": "MIT",
     "authors": [
+        {
+            "name":     "KptiveStudio",
+            "homepage": "http://kptivestudio.com"
+        },
         {
             "name": "Hubert Moutot",
             "email": "hubert.moutot@gmail.com"
