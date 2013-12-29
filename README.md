@@ -13,7 +13,7 @@ Run:
 
 ``` bash
 $ php composer.phar require kptive/payment-sips-bundle *@dev
-``
+```
 
 Or add the following to your `composer.json` before updating your vendors:
 
@@ -29,7 +29,7 @@ Or add the following to your `composer.json` before updating your vendors:
 
 Register the bundle in your `AppKernel` class.
 You will also have to register the `JMSPaymentCoreBundle` and
-(configure it)[http://jmsyst.com/bundles/JMSPaymentCoreBundle/master/configuration].
+[configure it](http://jmsyst.com/bundles/JMSPaymentCoreBundle/master/configuration).
 
 ``` php
 <?php
@@ -223,19 +223,18 @@ class CheckoutController extends Controller
 }
 ```
 
+
 As you can see in the previous action, when the user confirms their order, we
 create a new `PaymentInstruction` (see the
 [JMSPaymentCoreBundle documentation](http://jmsyst.com/bundles/JMSPaymentCoreBundle/master/model)
-for more information on how it works). They are then redirected to the
-`payment_gateway` route. This is where we'll make a call to the SIPS API so that
-we can display the SIPS credit card choice form.
+for more information on how it works).
+They are then redirected to the `payment_gateway` route.
+This is where we'll make a call to the SIPS API so that we can display the SIPS
+credit card choice form.
 
 Let's implement the corresponding action:
 
 ``` php
-
-    // ...
-
     /**
      * @Route("/gateway/{id}", name="payment_gateway")
      * @Template()
@@ -263,6 +262,7 @@ And in the corresponding view, display the form to the user:
 {{ sips|raw }}
 ```
 
+
 When the user has completed the payment workflow on the SIPS platform, they will
 be redirected to the `normal_return_url` you configured earlier in the bundle
 config section.
@@ -270,9 +270,6 @@ config section.
 Let's implement the action :
 
 ``` php
-
-    // ...
-
     /**
      * @Route("/complete", name="payment_complete")
      * @Template()
@@ -293,8 +290,10 @@ Let's implement the action :
     }
 ```
 
+
 For now, we didn't do anything with the Sale, we just handled the bank response
 and marked the payment as valid.
+
 The JMSPaymentCoreBundle will trigger a `payment.state_change` event.
 So we will listen to this event and do everything useful we want in a `PaymentListener`:
 
