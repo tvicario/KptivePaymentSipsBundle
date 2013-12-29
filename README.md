@@ -1,6 +1,9 @@
 KptivePaymentSipsBundle
 =======================
 
+[![Build Status](https://secure.travis-ci.org/KptiveStudio/KptivePaymentSipsBundle.png?branch=master)](http://travis-ci.org/KptiveStudio/KptivePaymentSipsBundle)
+
+
 The `KptivePaymentSipsBundle` provides access to the Atos SIPS payment solution through
 the [JMSPaymentCoreBundle](https://github.com/schmittjoh/JMSPaymentCoreBundle).
 
