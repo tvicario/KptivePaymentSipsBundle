@@ -13,11 +13,6 @@ class ReturnHandler
 {
 
     /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
-    /**
      * @var PluginControllerInterface
      */
     protected $pluginController;
@@ -25,12 +20,10 @@ class ReturnHandler
     /**
      * Constructor
      *
-     * @param EntityManager             $entityManager    an EntityManager instance
      * @param PluginControllerInterface $pluginController a PluginControllerInterface instance
      */
-    public function __construct(EntityManager $entityManager, PluginControllerInterface $pluginController)
+    public function __construct(PluginControllerInterface $pluginController)
     {
-        $this->entityManager = $entityManager;
         $this->pluginController = $pluginController;
     }
 
@@ -55,10 +48,6 @@ class ReturnHandler
         }
 
         $result = $this->pluginController->approveAndDeposit($payment->getId(), $payment->getTargetAmount());
-
-        if (Result::STATUS_SUCCESS !== $result->getStatus()) {
-            throw new \RuntimeException('Transaction was not successful: ' . $result->getReasonCode());
-        }
 
         return $result;
     }

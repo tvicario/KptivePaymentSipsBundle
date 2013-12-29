@@ -18,7 +18,6 @@
         </service>
 
         <service id="kptive_payment_sips.return_handler" class="%kptive_payment_sips.return_handler.class%">
-            <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="payment.plugin_controller" />
         </service>
 
