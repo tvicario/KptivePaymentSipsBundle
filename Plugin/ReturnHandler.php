@@ -4,7 +4,6 @@ namespace Kptive\PaymentSipsBundle\Plugin;
 
 use JMS\Payment\CoreBundle\PluginController\PluginControllerInterface;
 use JMS\Payment\CoreBundle\PluginController\Result;
-use Doctrine\ORM\EntityManager;
 
 /**
  * @author Hubert Moutot <hubert.moutot@gmail.com>

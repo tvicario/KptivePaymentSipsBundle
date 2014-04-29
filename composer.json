@@ -25,5 +25,10 @@
     "autoload": {
         "psr-0": { "Kptive\\PaymentSipsBundle\\": "" }
     },
-    "target-dir": "Kptive/PaymentSipsBundle"
+    "target-dir": "Kptive/PaymentSipsBundle",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
 }
