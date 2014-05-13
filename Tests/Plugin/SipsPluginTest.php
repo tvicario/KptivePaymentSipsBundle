@@ -65,7 +65,6 @@ class SipsPluginTest extends \PHPUnit_Framework_TestCase
 
         $this->sipsPlugin->approveAndDeposit($transaction, false);
 
-        //$this->assertEquals(FinancialTransactionInterface::STATE_SUCCESS, $transaction->getState());
         $this->assertEquals(PluginInterface::RESPONSE_CODE_SUCCESS, $transaction->getResponseCode());
         $this->assertEquals(PluginInterface::REASON_CODE_SUCCESS, $transaction->getReasonCode());
 
@@ -85,7 +84,6 @@ class SipsPluginTest extends \PHPUnit_Framework_TestCase
 
         $this->sipsPlugin->approveAndDeposit($transaction, false);
 
-        //$this->assertEquals(FinancialTransactionInterface::STATE_CANCELED, $transaction->getState());
         $this->assertEquals(SipsPlugin::RESPONSE_CODE_CANCELED, $transaction->getResponseCode());
         $this->assertEquals('Payment canceled', $transaction->getReasonCode());
     }
