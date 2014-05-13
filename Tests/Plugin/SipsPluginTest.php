@@ -65,11 +65,29 @@ class SipsPluginTest extends \PHPUnit_Framework_TestCase
 
         $this->sipsPlugin->approveAndDeposit($transaction, false);
 
-        //$this->assertEquals(FinancialTransactionInterface::STATE_FAILED, $transaction->getState());
+        //$this->assertEquals(FinancialTransactionInterface::STATE_SUCCESS, $transaction->getState());
         $this->assertEquals(PluginInterface::RESPONSE_CODE_SUCCESS, $transaction->getResponseCode());
         $this->assertEquals(PluginInterface::REASON_CODE_SUCCESS, $transaction->getReasonCode());
+
         $this->assertEquals(100.10, $transaction->getProcessedAmount());
         $this->assertEquals(2, $transaction->getReferenceNumber());
+    }
+
+    public function testApproveAndDepositCanceled()
+    {
+        $transaction = new FinancialTransaction();
+
+        $response = $this->getCanceledResponse();
+        $transaction->setExtendedData(new ExtendedData());
+        foreach ($response as $key => $val) {
+            $transaction->getExtendedData()->set($key, $val);
+        }
+
+        $this->sipsPlugin->approveAndDeposit($transaction, false);
+
+        //$this->assertEquals(FinancialTransactionInterface::STATE_CANCELED, $transaction->getState());
+        $this->assertEquals(SipsPlugin::RESPONSE_CODE_CANCELED, $transaction->getResponseCode());
+        $this->assertEquals('Payment canceled', $transaction->getReasonCode());
     }
 
     public function getFailedResponse()
@@ -84,6 +102,19 @@ class SipsPluginTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             'code' => 0,
+            'response_code' => 0,
+            'error' => '',
+            'order_id' => 2,
+            'amount' => 10010,
+            'transaction_id' => 1,
+        );
+    }
+
+    public function getCanceledResponse()
+    {
+        return array(
+            'code' => 0,
+            'response_code' => 17,
             'error' => '',
             'order_id' => 2,
             'amount' => 10010,
