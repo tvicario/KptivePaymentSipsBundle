@@ -35,7 +35,7 @@ class Client
             throw new \Exception(sprintf('Binary %s not found', $bin));
         }
 
-        $process = new Process(sprintf('%s %s', $bin, escapeshellcmd($this->arrayToArgsString($args))));
+        $process = new Process(sprintf('"%s" %s', $bin, escapeshellcmd($this->arrayToArgsString($args))));
         $process->run();
 
         if (!$process->isSuccessful()) {
@@ -74,7 +74,7 @@ class Client
         $str = '';
         foreach ($args as $key => $val) {
             if (is_numeric($val) or $val) {
-                $str .= sprintf('%s=%s ', $key, $val);
+                $str .= sprintf('%s=%s ', $key, escapeshellarg($val));
             }
         }
 
