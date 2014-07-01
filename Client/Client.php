@@ -39,7 +39,7 @@ class Client
         $process->run();
 
         if (!$process->isSuccessful()) {
-            var_dump($args, $process->getErrorOutput());
+            $this->logger->critical($process->getErrorOutput());
             throw new \RuntimeException($process->getErrorOutput());
         }
 
