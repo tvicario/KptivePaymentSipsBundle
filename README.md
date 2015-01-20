@@ -4,8 +4,22 @@ KptivePaymentSipsBundle
 [![Build Status](https://secure.travis-ci.org/KptiveStudio/KptivePaymentSipsBundle.png?branch=master)](http://travis-ci.org/KptiveStudio/KptivePaymentSipsBundle)
 
 
-The `KptivePaymentSipsBundle` provides access to the Atos SIPS payment solution through
+The `KptivePaymentSipsBundle` provides access to the Atos Worldline SIPS payment solution through
 the [JMSPaymentCoreBundle](https://github.com/schmittjoh/JMSPaymentCoreBundle).
+
+The following payment services are powered by Atos SIPS:
+- Merc@net (BNP Parisbas)
+- Cyberplus (Banque Populaire)
+- Elys Net (HSBC)
+- Scellius (La Banque Postale)
+- SogenActif (Société Générale)
+- Webaffaires (Crédit du Nord)
+- Sherlocks (LCL)
+- Citelis (Crédit Mutuel)
+- ...
+
+This means that this bundle should work out of the box with any of them.
+
 
 Installation
 ------------
@@ -84,7 +98,7 @@ Usage
 -----
 
 Let's assume that you have an `AcmePaymentBundle` and that you handle your
-orders with a `Acme\PaymentBundle\Entity\Sale` class:
+orders with a `Acme\PaymentBundle\Entity\Order` class:
 
 ``` php
 <?php
@@ -95,9 +109,9 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 
 /**
- * @ORM\Table(name="sale")
+ * @ORM\Table(name="acme_order")
  */
-class Sale
+class Order
 {
 
     /**
@@ -113,7 +127,7 @@ class Sale
     private $paymentInstruction;
 
     /**
-     * @ORM\Column(type="decimal", precision=2)
+     * @ORM\Column(type="decimal", precision=10, scale=2)
      */
     private $amount;
 
@@ -174,7 +188,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
-use Acme\PaymentBundle\Entity\Sale;
+use Acme\PaymentBundle\Entity\Order;
 
 /**
  * @Route("/checkout")
@@ -187,7 +201,7 @@ class CheckoutController extends Controller
      * @Route("/details/{id}", name = "payment_details")
      * @Template()
      */
-    public function detailsAction(Sale $sale)
+    public function detailsAction(Order $order)
     {
         $request = $this->get('request');
         $em = $this->get('doctrine')->getEntityManager();
@@ -204,22 +218,22 @@ class CheckoutController extends Controller
             $form->handleRequest($request);
 
             if ($form->isValid()) {
-                $instruction = new PaymentInstruction($sale->getAmount(), 978, 'sips');
+                $instruction = new PaymentInstruction($order->getAmount(), 978, 'sips');
 
                 $ppc->createPaymentInstruction($instruction);
 
-                $sale->setPaymentInstruction($instruction);
-                $em->persist($sale);
-                $em->flush($sale);
+                $order->setPaymentInstruction($instruction);
+                $em->persist($order);
+                $em->flush($order);
 
                 return new RedirectResponse($router->generate('payment_gateway', array(
-                    'id' => $sale->getId(),
+                    'id' => $order->getId(),
                 )));
             }
         }
 
         return array(
-            'sale' => $sale,
+            'order' => $order,
             'form' => $form->createView()
         );
     }
@@ -242,13 +256,13 @@ Let's implement the corresponding action:
      * @Route("/gateway/{id}", name="payment_gateway")
      * @Template()
      */
-    public function sipsGatewayAction(Sale $sale)
+    public function sipsGatewayAction(Order $order)
     {
         $client = $this->get('kptive_payment_sips.client');
 
         $config = array(
-            'amount' => $sale->getAmount() * 100,
-            'order_id' => $sale->getId(),
+            'amount' => $order->getAmount() * 100,
+            'order_id' => $order->getId(),
         );
 
         $sips = $client->request($config);
@@ -284,17 +298,17 @@ Let's implement the action :
         $client = $this->get('kptive_payment_sips.client');
 
         $response = $client->handleResponseData($data);
-        $sale = $em->getRepository('KsPaymentBundle:Sale')->find($response['order_id']);
-        $instruction = $sale->getPaymentInstruction();
+        $order = $em->getRepository('KsPaymentBundle:Order')->find($response['order_id']);
+        $instruction = $order->getPaymentInstruction();
 
         $result = $this->get('kptive_payment_sips.return_handler')->handle($instruction, $response);
 
-        return array('sale' => $sale);
+        return array('order' => $order);
     }
 ```
 
 
-For now, we didn't do anything with the Sale, we just handled the bank response
+For now, we didn't do anything with the Order, we just handled the bank response
 and marked the payment as valid.
 
 The JMSPaymentCoreBundle will trigger a `payment.state_change` event.
@@ -322,19 +336,17 @@ class PaymentListener
     public function onPaymentStateChange(PaymentStateChangeEvent $event)
     {
         if (PaymentInterface::STATE_DEPOSITED === $event->getNewState()) {
-            $sale = $this
+            $order = $this
                 ->entityManager
-                ->getRepository('AcmePaymentBundle:Sale')
+                ->getRepository('AcmePaymentBundle:Order')
                 ->findOneBy(array('paymentInstruction' => $event->getPaymentInstruction()));
 
-            $payedAt = new \DateTime();
+            $order->setPayedAt(new \DateTime());
 
-            $sale->setPayedAt($payedAt);
-
-            // Do various things with the Sale here
+            // Do various things with the Order here
             // ...
 
-            $this->entityManager->persist($sale);
+            $this->entityManager->persist($order);
             $this->entityManager->flush();
         }
     }
@@ -359,7 +371,7 @@ a request will be automatically issued to the configured `automatic_response_url
 You can use the same URL as the `normal_return_url` or implement your own.
 
 **Warning**: those examples don't take security into account. Don't forget to
-check the ownership of the sale!
+check the ownership of the order!
 
 
 Credits
@@ -370,6 +382,7 @@ Credits
 
 A great thank you to Johannes M Schmitt for his awesome JMSPayementCoreBundle.
 Thanks to https://github.com/Kitano/KitanoPaymentSipsBundle for the inspiration.
+
 
 License
 -------
