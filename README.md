@@ -29,7 +29,7 @@ Installation
 Run:
 
 ``` bash
-$ php composer.phar require kptive/payment-sips-bundle *@dev
+$ php composer.phar require kptive/payment-sips-bundle
 ```
 
 Or add the following to your `composer.json` before updating your vendors:
