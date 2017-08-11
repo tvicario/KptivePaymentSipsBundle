@@ -1,9 +1,9 @@
 {
-    "name": "kptive/payment-sips-bundle",
+    "name": "kaliop/payment-sips-bundle",
     "type": "symfony-bundle",
     "description": "Payment Bundle providing access to the ATOS SIPS solution",
     "keywords": ["payment", "atos", "sips", "mercanet", "cyberplus", "elysnet", "scellius","sogenactif", "webaffaires", "sherlocks", "citelis", "accord"],
-    "homepage": "http://github.com/KptiveStudio/KptivePaymentSipsBundle",
+    "homepage": "http://github.com/kaliop/KptivePaymentSipsBundle",
     "license": "MIT",
     "authors": [
         {
