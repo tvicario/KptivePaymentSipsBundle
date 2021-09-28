@@ -12,10 +12,9 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder('kptive_payment_sips');
 
-        return $treeBuilder
-            ->root('kptive_payment_sips', 'array')
+        return $treeBuilder->getRootNode()
                 ->children()
                     ->arrayNode('config')
                         ->children()

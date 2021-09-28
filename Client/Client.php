@@ -41,8 +41,8 @@ class Client
         if (!is_file($bin)) {
             throw new \InvalidArgumentException(sprintf('Binary %s not found', $bin));
         }
-
-        $process = new Process(sprintf('"%s" %s', $bin, escapeshellcmd($this->arrayToArgsString($args))));
+        array_unshift($args, $bin);
+        $process = new Process($args);
         $process->run();
 
         if (!$process->isSuccessful()) {
@@ -78,22 +78,16 @@ class Client
 
     /**
      * @param  array  $args
-     * @return string
+     * @return array
      */
-    protected function arrayToArgsString($args)
+    protected function formatArgs($args)
     {
-        if (is_string($args)) {
-            return $args;
-        }
-
-        $str = '';
+        $array = [];
         foreach ($args as $key => $val) {
-            if (is_numeric($val) or $val) {
-                $str .= sprintf('%s=%s ', $key, escapeshellarg($val));
-            }
+            $array[] = trim($key.'='.$val);
         }
 
-        return trim($str);
+        return $array;
     }
 
     /**
@@ -104,7 +98,7 @@ class Client
     {
         $args = array_merge($this->config, $config);
 
-        $output = $this->run($this->binaries['request_bin'], $this->arrayToArgsString($args));
+        $output = $this->run($this->binaries['request_bin'], $this->formatArgs($args));
 
         return $this->handleRequestOutput($output);
     }
@@ -116,11 +110,11 @@ class Client
     public function handleResponseData($data)
     {
         $args = array(
-            'message' => $data,
-            'pathfile' => $this->config['pathfile'],
+            'message='.$data,
+            'pathfile='.$this->config['pathfile'],
         );
 
-        $output = $this->run($this->binaries['response_bin'], $this->arrayToArgsString($args));
+        $output = $this->run($this->binaries['response_bin'], $args);
 
         list(
             $result['code'],
